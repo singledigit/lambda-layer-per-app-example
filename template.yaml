@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Template with App Layer
+
+Globals:
+  Function:
+    Timeout: 5
+    CodeUri: ./src
+    Runtime: nodejs12.x
+    Layers:
+      - !Ref AppLayer
+
+Resources:
+  AppLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ./deps
+      Description: Layer for this app
+      RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: nodejs12.x
+      
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: my-function.handler
+      Events:
+        APIEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
